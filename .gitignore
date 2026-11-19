@@ -1,0 +1,31 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# 포함 빌드(build-logic)의 출력도 제외
+**/build/
+
+# Kotlin DSL 컴파일 캐시
+.kotlin/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse / VS Code
+.classpath
+.project
+.settings/
+bin/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 로그
+*.log
