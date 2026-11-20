@@ -21,11 +21,12 @@ val functionalTest by sourceSets.creating
 dependencies {
     testImplementation(platform("org.junit:junit-bom:5.13.4"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testRuntimeOnly("org.junit.jupiter:junit-platform-launcher")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation(gradleApi())
 
     "functionalTestImplementation"(platform("org.junit:junit-bom:5.13.4"))
-    "functionalTestImplementation"(platform("org.junit.jupiter:junit-jupiter"))
-    "functionalTestImplementation"(platform("org.junit.platform:junit-platform-launcher"))
+    "functionalTestImplementation"("org.junit.jupiter:junit-jupiter")
+    "functionalTestRuntimeOnly"("org.junit.platform:junit-platform-launcher")
 }
 
 gradlePlugin {

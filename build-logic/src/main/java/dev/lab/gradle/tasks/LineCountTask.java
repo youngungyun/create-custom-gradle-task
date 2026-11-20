@@ -14,6 +14,7 @@ import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.DeleteSpec;
 import org.gradle.api.file.DirectoryProperty;
 import org.gradle.api.file.FileSystemOperations;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
@@ -24,6 +25,7 @@ import org.gradle.workers.WorkerExecutor;
 /**
  * 6단계: Worker API로 파일별 작업을 병렬 실행하고 결과를 집계한다.
  */
+@CacheableTask
 public abstract class LineCountTask extends DefaultTask {
 
 	record FileStat(String path, long lines) {}
