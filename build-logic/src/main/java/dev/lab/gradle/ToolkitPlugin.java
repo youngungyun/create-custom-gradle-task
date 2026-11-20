@@ -6,6 +6,7 @@ import org.gradle.api.tasks.SourceSetContainer;
 import org.gradle.api.tasks.TaskProvider;
 
 import dev.lab.gradle.tasks.BuildInfoTask;
+import dev.lab.gradle.tasks.ChecksumTask;
 import dev.lab.gradle.tasks.GreetingTask;
 import dev.lab.gradle.tasks.HelloTask;
 
@@ -71,6 +72,18 @@ public class ToolkitPlugin implements Plugin<Project> {
 				t.getOutputDir().set(layout.getBuildDirectory()
 					.dir("generated/sources/toolkit/java"));
 			});
+
+		// 5) 증분 Task
+		tasks.register("checksum", ChecksumTask.class, t -> {
+			t.setGroup(GROUP);
+			t.setDescription("src/ 아래 모든 파일의 체크섬 계산 (증분)");
+
+			t.getSources().from(layout.getProjectDirectory().dir("src"));
+			t.getAlgorithm().set(ext.getChecksumAlgorithm());
+
+			t.getOutputDir().set(layout.getBuildDirectory().dir("toolkit/checksums"));
+		});
+
 
 		// 7) java 플러그인이 있을 때만: 생성 소스를 main 소스셋에 연결
 		// Provider로 연결하려면 compileJava -> generateBuildInfo 의존성이 자동 생성된다.
