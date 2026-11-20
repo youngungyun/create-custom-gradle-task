@@ -2,7 +2,10 @@ package dev.lab.gradle;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.gradle.api.tasks.SourceSetContainer;
+import org.gradle.api.tasks.TaskProvider;
 
+import dev.lab.gradle.tasks.BuildInfoTask;
 import dev.lab.gradle.tasks.GreetingTask;
 import dev.lab.gradle.tasks.HelloTask;
 
@@ -50,5 +53,31 @@ public class ToolkitPlugin implements Plugin<Project> {
 			}
 		);
 
+		// 4) 소스 생성 + ValueSource
+		var gitCommit = providers.of(GitCommitValueSource.class, spec ->
+			spec.getParameters().getRepoDir().set(project.getRootProject().getLayout().getProjectDirectory()));
+
+		// plugins {} 블록은 version = "..."보다 먼저 실행되므로 반드시 Lazy하게 읽는다.
+		var version = providers.provider(() ->
+			project.getVersion().toString());
+		TaskProvider<BuildInfoTask> buildInfo =
+			tasks.register("generateBuildInfo", BuildInfoTask.class, t -> {
+				t.setGroup(GROUP);
+				t.setDescription("BuildInfo.java 생성");
+				t.getPackageName().set(ext.getBasePackage());
+				t.getAppVersion().convention(version);
+				t.getGitCommit().set(gitCommit);
+
+				t.getOutputDir().set(layout.getBuildDirectory()
+					.dir("generated/sources/toolkit/java"));
+			});
+
+		// 7) java 플러그인이 있을 때만: 생성 소스를 main 소스셋에 연결
+		// Provider로 연결하려면 compileJava -> generateBuildInfo 의존성이 자동 생성된다.
+		project.getPluginManager().withPlugin("java", plugin -> {
+			var sourceSets = project.getExtensions().getByType(SourceSetContainer.class);
+			sourceSets.named("main", main ->
+				main.getJava().srcDir(buildInfo.flatMap(BuildInfoTask::getOutputDir)));
+		});
 	}
 }
