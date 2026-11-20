@@ -9,6 +9,7 @@ import dev.lab.gradle.tasks.BuildInfoTask;
 import dev.lab.gradle.tasks.ChecksumTask;
 import dev.lab.gradle.tasks.GreetingTask;
 import dev.lab.gradle.tasks.HelloTask;
+import dev.lab.gradle.tasks.LineCountTask;
 
 /**
  * 4단계: 모든 Task를 등록하고 Extension과 연결하는 플러그인.
@@ -84,6 +85,13 @@ public class ToolkitPlugin implements Plugin<Project> {
 			t.getOutputDir().set(layout.getBuildDirectory().dir("toolkit/checksums"));
 		});
 
+		// 6) Worker API Task
+		tasks.register("countLines", LineCountTask.class, t -> {
+			t.setGroup(GROUP);
+			t.setDescription("Java 소스 줄 수 집계 (Worker API 병렬)");
+			t.getSources().from(layout.getProjectDirectory().dir("src/main/java"));
+			t.getOutputDir().set(layout.getBuildDirectory().dir("toolkit/line-count"));
+		});
 
 		// 7) java 플러그인이 있을 때만: 생성 소스를 main 소스셋에 연결
 		// Provider로 연결하려면 compileJava -> generateBuildInfo 의존성이 자동 생성된다.
